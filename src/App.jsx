@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { langString } from './data/lang';
 import { LangContext, initLang, FETCHING, ERROR, SUCCESS } from './context/lang.context';
-import { DisplayLang } from './container/DisplayLang.component';
+import { DisplayLang } from './container/DisplayLang.component.jsx';
 
 function App() {
   const [lang, setLang] = useState(initLang);
@@ -24,6 +24,15 @@ function App() {
                 },
                 {}
               )
+          )
+          .reduce(
+            (sum, tagObj) => {
+              const tagKey = tagObj.Type;
+              if (!sum[tagKey])
+                sum[tagKey] = {}
+              sum[tagKey][tagObj.Subtag] = tagObj;
+              return sum;
+            }, {}
           )
         );
       } catch (e) {
