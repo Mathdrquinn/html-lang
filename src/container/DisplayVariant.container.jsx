@@ -4,15 +4,19 @@ import { LangContext, SUCCESS } from "../context/lang.context"
 import { useContext } from "react"
 import { useThrottle } from 'react-use';
 
-export const DisplayLang = () => {
+export const DisplayVariant = () => {
     const lang = useContext(LangContext);
     const [term, setTerm] = useState('');
     const throttledTerm = useThrottle(term, 150);
     const matchingTags = useMemo(() => {
         if(lang.status !== SUCCESS)
             return [];
-        return Object.keys(lang.data.language)
-        .map(k => lang.data.language[k])
+        if(lang.status === SUCCESS && throttledTerm.trim() === '')
+            return Object.keys(lang.data.variant)
+            .map(k => lang.data.variant[k])
+            .slice(0, 8);
+        return Object.keys(lang.data.variant)
+        .map(k => lang.data.variant[k])
         .filter(tag => tag.Description.toLowerCase().includes(throttledTerm.toLowerCase()) || tag.Subtag.toLowerCase().includes(throttledTerm.toLowerCase()))
         .slice(0, 8)
     }, [throttledTerm, lang])
@@ -22,7 +26,7 @@ export const DisplayLang = () => {
 
     return (
         <>
-            <h4 id="demo">Basic, Fixed List Combobox</h4>
+            <h4 id="demo">Find and display a variant</h4>
             <Combobox>
                 <ComboboxInput
                     aria-labelledby="demo"
@@ -40,7 +44,6 @@ export const DisplayLang = () => {
                     </ComboboxList>
                 </ComboboxPopover>
             </Combobox>
-            <pre>{JSON.stringify(lang, null, 4)}</pre>
         </>
     )
 }
